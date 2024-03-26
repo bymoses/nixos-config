@@ -38,7 +38,7 @@
       allowUnfreePredicate = _: true;
       # tmp for obsidian
       permittedInsecurePackages = [
-        "electron-25.9.0"
+        "nix-2.16.2"
       ];
     };
   };
@@ -53,26 +53,46 @@
     };
     shellAliases = {
       d = "docker";
-      dps = "ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.RunningFor}}\t{{.Image}}'";
+      dps = "d ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.RunningFor}}\t{{.Image}}'";
+      dr = "d run --rm -v (pwd):/app -w /app -u (id -u):(id -g)";
       dc = "d compose";
       dcu = "dc up --build -d --force-recreate";
       dcd = "dc down";
+      dce = "dc exec";
       dcr = "dc run --build --rm";
       dcrs = "dcr --service-ports --use-aliases";
       dcl = "dc logs -f --no-log-prefix -n 50";
-      dcps = ''dc ps --format json | jq --slurp '(["Id", "Service", "Ports", "Image", "Uptime"] | (., map(length*"-"))), (.[] | [.ID[0:5], .Service, .Ports, .Image, .RunningFor ]) | @tsv' | sed "s/\\\\\\t/;/g" | sed "s/\"//g" | column -ts ";"'';
+      dcps = ''dc ps --format json | jq --slurp '(["Id", "Service", "Ports", "Image", "Status", "Uptime"] | (., map(length*"-"))), (.[] | [.ID[0:5], .Service, .Ports, .Image, .Status, .RunningFor ]) | @tsv' | sed "s/\\\\\\t/;/g" | sed "s/\"//g" | column -ts ";"'';
+
+      k = "kubecolor";
+      kl = "k logs --tail 50 -f";
+      kgp = "k get po";
+      kgn = "k get no";
+      ksns = "k config set-context --current --namespace";
     };
     packages =  with pkgs; [
-      gradience
-      obsidian
-      docker-compose
+      # applications
+      telegram-desktop
+      # obsidian
+      # warp-terminal
+
+      # fonts
+      (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
+
+      # cli utils
       freshfetch
+      ripgrep
       killall
       grc
-      ripgrep
-      telegram-desktop
       jq
-      (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
+
+      # docker
+      docker-compose
+
+      # kubernetes
+      kubernetes-helm
+      kubecolor
+      kubectl
     ];
     # pointerCursor =
     #   let

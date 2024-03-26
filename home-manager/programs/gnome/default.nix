@@ -78,5 +78,8 @@
     "org/gnome/desktop/input-sources" = {
       xkb-options = ["grp:caps_toggle"];
     };
+    "org/gnome/shell/extensions/clipboard-history" = {
+      toggle-menu = ["<Super>k"];
+    };
   };
 }

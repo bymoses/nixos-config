@@ -62,11 +62,16 @@
     auto-optimise-store = true;
   };
 
-  # FIXME: Add the rest of your current configuration
-
-  networking.hostName = "host";
+  networking = {
+    hostName = "host";
     # Enable networking
-  networking.networkmanager.enable = true;
+    networkmanager.enable = true;
+    extraHosts = ''
+      176.222.53.54 traefik.residual.internal
+      176.222.53.54 minio-console.residual.internal
+      176.222.53.54 hasura-console.residual.internal
+    '';
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
@@ -81,10 +86,10 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us,ru";
-    xkbVariant = "";
-    xkbOptions = "grp:caps_toggle";
+    variant = "";
+    options = "grp:caps_toggle";
   };
 
   # Enable CUPS to print documents.
@@ -106,6 +111,7 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
   };
+
   programs = {
     fish.enable = true;
     fish.promptInit = ''
@@ -150,8 +156,6 @@
   environment.systemPackages = with pkgs; [
     vim
       git
-#  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-#  wget
   ];
 
 # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

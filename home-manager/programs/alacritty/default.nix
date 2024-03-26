@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       window = {
-        opacity = 0.93;
+        opacity = 0.95;
         dynamic_title = false;
         dynamic_padding = false;
         decorations = "none";
