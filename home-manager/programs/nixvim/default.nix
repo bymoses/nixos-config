@@ -73,9 +73,12 @@ in {
       { mode = "n"; key = "<leader>hl"; action = ":Telescope harpoon marks<CR>"; inherit options; }
 
       # LSP
-      { mode = "n"; key = "ga"; action = ":lua vim.lsp.buf.code_action()<CR>"; inherit options; }
       { mode = "n"; key = "gr"; action = ":Telescope lsp_references<CR>"; inherit options; }
       { mode = "n"; key = "gd"; action = ":Telescope lsp_definitions<CR>"; inherit options; }
+      { mode = "n"; key = "ga"; action = ":lua vim.lsp.buf.code_action()<CR>"; inherit options; }
+      { mode = "n"; key = "gh"; action = ":lua vim.lsp.buf.hover()<CR>"; inherit options; }
+      { mode = "n"; key = "gt"; action = ":lua vim.lsp.buf.type_definition()<CR>"; inherit options; }
+      { mode = "n"; key = "K"; action = ":lua vim.diagnostic.open_float()<CR>"; inherit options; }
 
       # Buffers
       { mode = "n"; key = "<leader>bp"; action = ":bp<CR>"; inherit options; }
@@ -166,6 +169,14 @@ in {
       };
       lsp = {
         enable = true;
+        preConfig = ''
+          local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+          function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+            opts = opts or {}
+            opts.border = opts.border or "rounded"
+            return orig_util_open_floating_preview(contents, syntax, opts, ...)
+          end
+        '';
         servers = {
           dockerls.enable = true;
           graphql.enable = true;
