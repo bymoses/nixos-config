@@ -75,6 +75,7 @@
       telegram-desktop
       # obsidian
       # warp-terminal
+      # zed-editor
 
       # fonts
       (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })

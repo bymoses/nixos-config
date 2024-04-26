@@ -13,6 +13,10 @@ in {
     enable = true;
     viAlias = true;
     vimAlias = true;
+    globals = {
+      netrw_liststyle = 3;
+      mapleader = " ";
+    };
 
     clipboard = {
       register = "unnamedplus";
@@ -21,7 +25,7 @@ in {
 
     luaLoader.enable = true;
 
-    options = {
+    opts = {
       completeopt = ["menu" "menuone" "noselect"];
       mouse = "a";
 
@@ -62,14 +66,33 @@ in {
       { mode = "n"; key = "fs"; action = ":write<CR>"; inherit options; }
 
       # Telescope
-      { mode = "n"; key = "gf"; action = ":Telescope live_grep<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>ff"; action = ":Telescope find_files<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>fg"; action = ":Telescope live_grep<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>fb"; action = ":Telescope buffers<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>hl"; action = ":Telescope harpoon marks<CR>"; inherit options; }
+      { mode = "n"; key = "gr"; action = ":Telescope lsp_references<CR>"; inherit options; }
+      { mode = "n"; key = "gd"; action = ":Telescope lsp_definitions<CR>"; inherit options; }
+
+      # Buffers
+      { mode = "n"; key = "<leader>bp"; action = ":bp<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>bn"; action = ":bn<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>bd"; action = ":bd<CR>"; inherit options; }
 
       # Neotree
-      { mode = "n"; key = "tn"; action = ":Neotree toggle<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>tn"; action = ":Neotree toggle<CR>"; inherit options; }
+
+      # Netrw
+      # { mode = "n"; key = "tn"; action = ":Explore<CR><CR>"; inherit options; }
 
       # Visual mode
       { mode = "v"; key = "<"; action = "<gv"; inherit options; }
       { mode = "v"; key = ">"; action = ">gv"; inherit options; }
+
+      # vim-tmux-plugin
+      { key = "<M-h>"; action = "<cmd>TmuxNavigateLeft<cr>"; }
+      { key = "<M-j>"; action = "<cmd>TmuxNavigateDown<cr>"; }
+      { key = "<M-k>"; action = "<cmd>TmuxNavigateUp<cr>"; }
+      { key = "<M-l>"; action = "<cmd>TmuxNavigateRight<cr>"; }
     ];
 
     # Highlight and remove extra white spaces
@@ -80,10 +103,39 @@ in {
       enable = true;
       settings = {
         transparent = true;
+        colors = {
+          theme = {
+            all.ui.bg_gutter = "none";
+          };
+        };
+        overrides = ''
+          function(colors)
+            local theme = colors.theme
+            return {
+              TelescopeTitle = { fg = theme.ui.special, bold = true },
+              TelescopePromptNormal = { bg = "none" },
+              TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = "none" },
+              -- TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+              TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = "none" },
+              -- TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+              TelescopePreviewBorder = { bg = "none", fg = theme.ui.bg_dim },
+            }
+          end
+          '';
       };
     };
 
     plugins = {
+      harpoon = {
+        enable = true;
+        enableTelescope = true;
+        keymaps = {
+          navFile = { "1" = "<C-j>"; "2" = "<C-k>"; "3" = "<C-l>"; "4" = "<C-m>"; };
+          navNext = "<C-n>";
+          navPrev = "<C-p>";
+          addFile = "<leader>ha";
+        };
+      };
       better-escape = {
         enable = true;
         clearEmptyLines = true;
@@ -98,9 +150,12 @@ in {
           jsonls.enable = true;
           nixd.enable = true;
           pyright.enable = true;
-          tsserver.enable = true;
+          tsserver = {
+            enable = true;
+          };
           tailwindcss.enable = true;
           # vuels.enable = true;
+          volar.enable = true;
           yamlls.enable = true;
         };
       };
@@ -115,7 +170,7 @@ in {
           # { name = "luasnip"; }
           ];
           snippet = {
-            expand = "luasnip";
+            expand = "function(args) require('luasnip').lsp_expand(args.body) end";
           };
           formatting = {
             format = ''
@@ -198,9 +253,8 @@ in {
       telescope = {
         enable = true;
         extensions = {
-          # fzf-native = {
-          #   enable = true;
-          # };
+          fzf-native.enable = true;
+          frecency.enable = true;
         };
       };
       lualine = {
@@ -244,6 +298,14 @@ in {
         #   enabled = true;
         #   leaveDirsOpen = true;
         # };
+        eventHandlers = {
+          file_opened = ''
+            function(file_path)
+            --auto close
+            require("neo-tree").close_all()
+            end
+            '';
+        };
       };
 
       cmp-nvim-lsp.enable = true;
@@ -261,7 +323,6 @@ in {
       #   };
       # };
 
-      diffview.enable = true;
       notify.enable = true;
       indent-blankline.enable = true;
       ts-autotag.enable = true;
@@ -269,24 +330,16 @@ in {
       nvim-colorizer.enable = true;
       comment.enable = true;
       ts-context-commentstring.enable = true;
+
+      tmux-navigator = {
+        enable = true;
+        settings = {
+          no_mappings = true;
+        };
+      };
     };
 
-    extraPlugins = with pkgs.vimPlugins; [
-      vim-tmux-navigator
-    ];
     extraConfigLua = ''
-      require('nvim-tmux-navigation').setup {
-        disable_when_zoomed = true, -- defaults to false
-        keybindings = {
-          left = "<M-h>",
-          down = "<M-j>",
-          up = "<M-k>",
-          right = "<M-l>",
-          -- last_active = "<C-\\>",
-          -- next = "<C-Space>",
-        }
-      }
-
       function has_words_before()
         local cursor = vim.api.nvim_win_get_cursor(0)
         return vim.api.nvim_get_current_line():sub(1, cursor[2]):match('^%s$')
