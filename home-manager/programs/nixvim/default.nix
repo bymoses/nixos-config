@@ -36,12 +36,13 @@ in {
       expandtab = true;
 
       # UI config
-      number = false;
+      number = true;
+      relativenumber = true;
       splitbelow = true;
       splitright = true;
       scrolloff = 8;
       sidescrolloff = 8;
-      list = true;
+      list = false;
       cmdheight = 0;
       listchars = {eol = "↵"; tab = "│ "; trail = "~"; extends = ">"; precedes = "<";};
 
@@ -70,6 +71,9 @@ in {
       { mode = "n"; key = "<leader>fg"; action = ":Telescope live_grep<CR>"; inherit options; }
       { mode = "n"; key = "<leader>fb"; action = ":Telescope buffers<CR>"; inherit options; }
       { mode = "n"; key = "<leader>hl"; action = ":Telescope harpoon marks<CR>"; inherit options; }
+
+      # LSP
+      { mode = "n"; key = "ga"; action = ":lua vim.lsp.buf.code_action()<CR>"; inherit options; }
       { mode = "n"; key = "gr"; action = ":Telescope lsp_references<CR>"; inherit options; }
       { mode = "n"; key = "gd"; action = ":Telescope lsp_definitions<CR>"; inherit options; }
 
@@ -106,19 +110,38 @@ in {
         colors = {
           theme = {
             all.ui.bg_gutter = "none";
+            all.ui.float.bg = "none";
           };
         };
         overrides = ''
           function(colors)
             local theme = colors.theme
             return {
-              TelescopeTitle = { fg = theme.ui.special, bold = true },
-              TelescopePromptNormal = { bg = "none" },
-              TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = "none" },
-              -- TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
-              TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = "none" },
-              -- TelescopePreviewNormal = { bg = theme.ui.bg_dim },
-              TelescopePreviewBorder = { bg = "none", fg = theme.ui.bg_dim },
+              Pmenu = { fg = theme.ui.shade0, bg = "none" },  -- add `blend = vim.o.pumblend` to enable transparency
+                PmenuSel = { fg = "NONE", bg = theme.ui.bg_p2 },
+                         PmenuSbar = { bg = theme.ui.bg_m1 },
+                         PmenuThumb = { bg = theme.ui.bg_p2 },
+
+                         NormalFloat = { bg = "none" },
+                         FloatBorder = { bg = "none" },
+                         FloatTitle = { bg = "none" },
+
+                         -- Save an hlgroup with dark background and dimmed foreground
+                           -- so that you can use it where your still want darker windows.
+                           -- E.g.: autocmd TermOpen * setlocal winhighlight=Normal:NormalDark
+                           NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
+
+                         -- Popular plugins that open floats will link to NormalFloat by default;
+              -- set their background accordingly if you wish to keep them dark and borderless
+                LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                           MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                           TelescopeTitle = { fg = theme.ui.special, bold = true },
+                           TelescopePromptNormal = { bg = "none" },
+                           TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = "none" },
+                           -- TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
+                           TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = "none" },
+                           -- TelescopePreviewNormal = { bg = theme.ui.bg_dim },
+                           TelescopePreviewBorder = { bg = "none", fg = theme.ui.bg_dim },
             }
           end
           '';
@@ -159,9 +182,43 @@ in {
           yamlls.enable = true;
         };
       };
+      lspkind = {
+        enable = true;
+        cmp = {
+          enable = true;
+          menu = {
+            buffer = "[buf]";
+            copilot = "[copilot]";
+            path = "[path]";
+            nvim_lsp = "[lsp]";
+            luasnip = "[snip]";
+            nvim_lua = "[lua]";
+          };
+        };
+      };
+      # lspsaga = {
+      #   enable = true;
+      # };
       cmp = {
         enable = true;
         settings = {
+          window.completion.border = "rounded";
+          window.documentation.border = "rounded";
+          experimental = {
+            ghost_text = true;
+          };
+          sorting = {
+            comparators = [
+              "require('cmp.config.compare').score"
+                "require('cmp.config.compare').offset"
+                "require('cmp.config.compare').locality"
+                "require('cmp.config.compare').exact"
+                "require('cmp.config.compare').recently_used"
+                "require('cmp.config.compare').kind"
+                "require('cmp.config.compare').length"
+                "require('cmp.config.compare').order"
+            ];
+          };
           sources = [
           { name = "nvim_lsp"; }
           # { name = "copilot"; }
@@ -171,52 +228,6 @@ in {
           ];
           snippet = {
             expand = "function(args) require('luasnip').lsp_expand(args.body) end";
-          };
-          formatting = {
-            format = ''
-            function(entry, vim_item)
-              -- Kind icons
-              local kind_icons = {
-                Text = "",
-                Method = "󰆧",
-                Function = "󰊕",
-                Constructor = "",
-                Field = "󰇽",
-                Variable = "󰂡",
-                Class = "󰠱",
-                Interface = "",
-                Module = "",
-                Property = "󰜢",
-                Unit = "",
-                Value = "󰎠",
-                Enum = "",
-                Keyword = "󰌋",
-                Snippet = "",
-                Color = "󰏘",
-                File = "󰈙",
-                Reference = "",
-                Folder = "󰉋",
-                EnumMember = "",
-                Constant = "󰏿",
-                Struct = "",
-                Event = "",
-                Operator = "󰆕",
-                TypeParameter = "󰅲",
-              }
-
-              vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-              -- Source
-              vim_item.menu = ({
-                  buffer = "[Buffer]",
-                  copilot = "[Copilot]",
-                  path = "[Path]",
-                  nvim_lsp = "[LSP]",
-                  luasnip = "[LuaSnip]",
-                  nvim_lua = "[Lua]",
-                  })[entry.source.name]
-              return vim_item
-            end
-            '';
           };
           mapping = {
             __raw = ''
@@ -255,6 +266,7 @@ in {
         extensions = {
           fzf-native.enable = true;
           frecency.enable = true;
+          ui-select.enable = true;
         };
       };
       lualine = {
@@ -324,7 +336,12 @@ in {
       # };
 
       notify.enable = true;
-      indent-blankline.enable = true;
+      indent-blankline = {
+        enable = true;
+        settings = {
+          indent.char = "│";
+        };
+      };
       ts-autotag.enable = true;
       nvim-autopairs.enable = true;
       nvim-colorizer.enable = true;
