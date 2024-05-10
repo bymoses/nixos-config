@@ -2,58 +2,56 @@
   description = "Your new nix config";
 
   inputs = {
-    # Nixpkgs
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11-small";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-
-    # TODO: Add any other flake you might need
-    # hardware.url = "github:nixos/nixos-hardware";
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-23.11";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
-    # Shameless plug: looking for a way to nixify your themes and make
-    # everything match nicely? Try nix-colors!
-    # nix-colors.url = "github:misterio77/nix-colors";
+    # hardware.url = "github:nixos/nixos-hardware";
+    telegram-desktop.url = "github:nixos/nixpkgs/3f178e415639bd509b2cb09f9e56b7994f11ed17";
+
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-23.11";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs = {
-    self,
-    nixpkgs,
+    nixpkgs-stable,
+    nixpkgs-unstable,
     home-manager,
     nixvim,
     ...
-  } @ inputs: let
-    inherit (self) outputs;
-
-    homeManagerModules = [
-      nixvim.homeManagerModules.nixvim
-    ];
-  in {
+  } @ inputs:
+  let
+    vars = {
+      user = "user";
+      terminal = "alacritty";
+    };
+  in
+  {
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
-    nixosConfigurations = {
-      host = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        # > Our main nixos configuration file <
-        modules = [./nixos/configuration.nix];
-      };
-    };
+    nixosConfigurations = (
+      import ./hosts {
+        inherit (nixpkgs-stable) lib;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable home-manager nixvim;
+      }
+    );
 
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#your-username@your-hostname'
-    homeConfigurations = {
-      "user@host" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
-        # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix] ++ homeManagerModules;
-      };
-    };
+    homeConfigurations = (
+      import ./nix {
+        inherit (nixpkgs-stable) lib;
+        inherit inputs vars;
+      }
+    );
   };
 }

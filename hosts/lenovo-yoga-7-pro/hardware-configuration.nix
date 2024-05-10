@@ -11,8 +11,16 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.initrd.secrets = { };
-  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot = {
+    kernelModules = [ "kvm-amd" ];
+    kernelParams = [
+      "mem_sleep_default=deep"
+      ## Fixes for s2idle:
+      ##    https://www.phoronix.com/news/More-s2idle-Rembrandt-Linux
+      "acpi.prefer_microsoft_dsm_guid=1"
+    ];
+  };
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/9e85fd6d-9874-4340-83be-2386bb85e088";

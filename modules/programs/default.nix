@@ -1,5 +1,5 @@
 let
-  more = { pkgs, ... }: {
+  more = { ... }: {
     programs = {
       home-manager.enable = true;
       jq.enable = true;

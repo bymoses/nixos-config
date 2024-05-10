@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{ ... }: let
   # keymap options
   options = {
     noremap = true;
@@ -86,10 +82,13 @@ in {
       { mode = "n"; key = "<leader>bd"; action = ":bd<CR>"; inherit options; }
 
       # Neotree
-      { mode = "n"; key = "<leader>tn"; action = ":Neotree toggle<CR>"; inherit options; }
+      # { mode = "n"; key = "<leader>tn"; action = ":Neotree toggle<CR>"; inherit options; }
 
       # Netrw
       # { mode = "n"; key = "tn"; action = ":Explore<CR><CR>"; inherit options; }
+
+      # Telescope file browser
+      { mode = "n"; key = "<leader>tn"; action = ":Telescope file_browser path=%:p:h<CR>"; inherit options; }
 
       # Visual mode
       { mode = "v"; key = "<"; action = "<gv"; inherit options; }
@@ -100,6 +99,10 @@ in {
       { key = "<M-j>"; action = "<cmd>TmuxNavigateDown<cr>"; }
       { key = "<M-k>"; action = "<cmd>TmuxNavigateUp<cr>"; }
       { key = "<M-l>"; action = "<cmd>TmuxNavigateRight<cr>"; }
+
+      # other
+      { mode = "n"; key = "<leader>s"; action = ":split<CR>"; inherit options; }
+      { mode = "n"; key = "<leader>vs"; action = ":vs<CR>"; inherit options; }
     ];
 
     # Highlight and remove extra white spaces
@@ -182,7 +185,7 @@ in {
           graphql.enable = true;
           html.enable = true;
           jsonls.enable = true;
-          nixd.enable = true;
+          nil_ls.enable = true;
           pyright.enable = true;
           tsserver = {
             enable = true;
@@ -275,6 +278,12 @@ in {
       telescope = {
         enable = true;
         extensions = {
+          file-browser = {
+            enable = true;
+            settings = {
+              grouped = true;
+            };
+          };
           fzf-native.enable = true;
           frecency.enable = true;
           ui-select.enable = true;
@@ -289,6 +298,8 @@ in {
       treesitter = {
         enable = true;
         indent = true;
+        nixvimInjections = true;
+        nixGrammars = true;
         ensureInstalled = [
           "bash"
           "css"
@@ -321,14 +332,14 @@ in {
         #   enabled = true;
         #   leaveDirsOpen = true;
         # };
-        eventHandlers = {
-          file_opened = ''
-            function(file_path)
-            --auto close
-            require("neo-tree").close_all()
-            end
-            '';
-        };
+        # eventHandlers = {
+        #   file_opened = ''
+        #     function(file_path)
+        #     --auto close
+        #     require("neo-tree").close_all()
+        #     end
+        #     '';
+        # };
       };
 
       cmp-nvim-lsp.enable = true;
@@ -355,9 +366,17 @@ in {
       };
       ts-autotag.enable = true;
       nvim-autopairs.enable = true;
-      nvim-colorizer.enable = true;
+      nvim-colorizer = {
+        enable = true;
+        userDefaultOptions = {
+          css = true;
+          tailwind = "both";
+        };
+      };
       comment.enable = true;
       ts-context-commentstring.enable = true;
+      markdown-preview.enable = true;
+      which-key.enable = true;
 
       tmux-navigator = {
         enable = true;
