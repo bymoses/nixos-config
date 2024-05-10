@@ -14,12 +14,11 @@
 #               └─ docker.nix
 #
 
-{ host, unstable, ... }:
+{ host, pkgs-stable, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
-      # ../../modules/desktops/virtualisation/docker.nix
   ];
 
   boot = {
@@ -41,7 +40,7 @@
     fish = {
       enable = true;
       promptInit = ''
-        ${unstable.any-nix-shell}/bin/any-nix-shell fish --info-right | source
+        ${pkgs-stable.any-nix-shell}/bin/any-nix-shell fish --info-right | source
         '';
     };
   };

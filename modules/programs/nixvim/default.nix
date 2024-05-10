@@ -1,10 +1,12 @@
-{ ... }: let
+{ ... }:
+let
   # keymap options
   options = {
     noremap = true;
     silent = true;
   };
-in {
+in
+{
   programs.nixvim = {
     enable = true;
     viAlias = true;

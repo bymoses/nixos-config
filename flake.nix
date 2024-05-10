@@ -7,8 +7,8 @@
 
     # Home manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.11";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
@@ -17,7 +17,7 @@
     telegram-desktop.url = "github:nixos/nixpkgs/3f178e415639bd509b2cb09f9e56b7994f11ed17";
 
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-23.11";
+      url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
@@ -25,6 +25,7 @@
   outputs = {
     nixpkgs-stable,
     nixpkgs-unstable,
+    telegram-desktop,
     home-manager,
     nixvim,
     ...
@@ -33,6 +34,17 @@
     vars = {
       user = "user";
       terminal = "alacritty";
+      system = "x86_64-linux";
+    };
+
+    pkgs-stable = import nixpkgs-stable {
+      inherit (vars) system;
+      config.allowUnfree = true;
+    };
+
+    pkgs-unstable = import nixpkgs-unstable {
+      inherit (vars) system;
+      config.allowUnfree = true;
     };
   in
   {
@@ -41,16 +53,16 @@
     nixosConfigurations = (
       import ./hosts {
         inherit (nixpkgs-stable) lib;
-        inherit inputs vars nixpkgs-stable nixpkgs-unstable home-manager nixvim;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable;
       }
     );
 
     # Standalone home-manager configuration entrypoint
     # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = (
-      import ./nix {
-        inherit (nixpkgs-stable) lib;
-        inherit inputs vars;
+      import ./users {
+        inherit (nixpkgs-unstable) lib;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable telegram-desktop home-manager nixvim;
       }
     );
   };

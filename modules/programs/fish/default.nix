@@ -1,11 +1,8 @@
-{
-  pkgs,
-    lib,
-    ...
-}:
+{ pkgs, lib, ... }:
 let
   config = lib.readFile ./config.fish;
-in {
+in
+{
   programs.fish = {
     enable = true;
 
