@@ -1,4 +1,4 @@
 [
-  # ./hyperland
+  ./hyprland
   ./gnome
 ]

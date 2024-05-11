@@ -25,11 +25,12 @@
   outputs = {
     nixpkgs-stable,
     nixpkgs-unstable,
+    hyprland,
     telegram-desktop,
     home-manager,
     nixvim,
     ...
-  } @ inputs:
+  } @inputs:
   let
     vars = {
       user = "user";
@@ -53,7 +54,7 @@
     nixosConfigurations = (
       import ./hosts {
         inherit (nixpkgs-stable) lib;
-        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable hyprland;
       }
     );
 
@@ -62,7 +63,7 @@
     homeConfigurations = (
       import ./users {
         inherit (nixpkgs-unstable) lib;
-        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable telegram-desktop home-manager nixvim;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable telegram-desktop home-manager nixvim hyprland;
       }
     );
   };

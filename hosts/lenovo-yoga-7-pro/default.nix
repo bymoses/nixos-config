@@ -14,8 +14,7 @@
 #               └─ docker.nix
 #
 
-{ host, pkgs-stable, ... }:
-
+{ host, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -30,22 +29,18 @@
       };
       grub = {
         enable = true;
-        device = "nodev"; # or "nodev" for efi only
-          efiSupport = true;
+        device = "nodev";
+        efiSupport = true;
       };
     };
   };
 
   programs = {
-    fish = {
-      enable = true;
-      promptInit = ''
-        ${pkgs-stable.any-nix-shell}/bin/any-nix-shell fish --info-right | source
-        '';
-    };
+    fish.enable = true;
   };
 
   gnome.enable = true;
+  hyprland.enable = true;
 
   virtualisation.docker = {
     enable = true;

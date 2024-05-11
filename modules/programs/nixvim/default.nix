@@ -1,5 +1,6 @@
-{ ... }:
+{ inputs, ... }:
 let
+
   # keymap options
   options = {
     noremap = true;
@@ -7,6 +8,8 @@ let
   };
 in
 {
+  imports = [ inputs.nixvim.homeManagerModules.nixvim ];
+
   programs.nixvim = {
     enable = true;
     viAlias = true;

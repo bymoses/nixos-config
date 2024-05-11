@@ -5,10 +5,10 @@ in
 {
   programs.fish = {
     enable = true;
-
     interactiveShellInit = ''
       freshfetch
       ${config}
+      ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
 
       kubectl completion fish | source
       complete -k -c k -n '__kubectl_requires_order_preservation && __kubectl_prepare_completions' -f -a '$__kubectl_comp_results'

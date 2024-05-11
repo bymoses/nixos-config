@@ -14,6 +14,7 @@
   vars,
   lib,
   pkgs-stable,
+  hyprland,
   ...
 }:
 {
@@ -21,7 +22,7 @@
   host = lib.nixosSystem {
     inherit (vars) system;
     specialArgs = {
-      inherit inputs pkgs-stable vars;
+      inherit inputs pkgs-stable vars hyprland;
       host = {
         hostName = "host";
       };
