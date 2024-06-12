@@ -51,20 +51,11 @@
     # Enable networking
     networkmanager.enable = true;
     extraHosts = ''
-      66.151.32.123 residual
-
-      176.222.53.54 traefik.residual.internal
-      176.222.53.54 minio-console.residual.internal
-      176.222.53.54 hasura-console.residual.internal
-
       # 127.0.0.1 residual-dev-v1-app.proxy.bymoses.pro
       # 127.0.0.1 residual-dev-v1-graphql.proxy.bymoses.pro
       # 127.0.0.1 residual-dev-v1-minio.proxy.bymoses.pro
       # 127.0.0.1 residual-dev-v1-hasura.proxy.bymoses.pro
       # 127.0.0.1 residual-dev-v1-migrations.proxy.bymoses.pro
-
-      # 37.27.30.166 spirit.astromatrix.pro
-      # 37.27.30.166 app.astromatrix.pro
     '';
   };
 }
