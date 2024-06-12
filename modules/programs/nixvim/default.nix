@@ -24,6 +24,12 @@ in
       providers.wl-copy.enable = true;
     };
 
+    filetype = {
+      extension = {
+        tact = "tact";
+      };
+    };
+
     luaLoader.enable = true;
 
     opts = {
@@ -190,12 +196,23 @@ in
           graphql.enable = true;
           html.enable = true;
           jsonls.enable = true;
-          nil_ls.enable = true;
+          nil-ls.enable = true;
           pyright.enable = true;
           tsserver = {
             enable = true;
           };
-          tailwindcss.enable = true;
+          tailwindcss = {
+            enable = true;
+            settings = {
+              tailwindCSS = {
+                experimental = {
+                  classRegex = [
+                    "class\\: '([^']*)'"
+                  ];
+                };
+              };
+            };
+          };
           # vuels.enable = true;
           volar.enable = true;
           yamlls.enable = true;
@@ -329,6 +346,7 @@ in
           "graphql"
           "nix"
           "helm"
+          "tact"
         ];
       };
       neo-tree = {

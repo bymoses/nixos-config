@@ -2,7 +2,7 @@
   description = "Your new nix config";
 
   inputs = {
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.11-small";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05-small";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Home manager
@@ -11,10 +11,10 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+    # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
     # hardware.url = "github:nixos/nixos-hardware";
-    telegram-desktop.url = "github:nixos/nixpkgs/3f178e415639bd509b2cb09f9e56b7994f11ed17";
+    telegram-desktop.url = "github:nixos/nixpkgs/2a2ccc0c974d3bdb590597b77f35c454bbfa8a6a";
 
     nixvim = {
       url = "github:nix-community/nixvim";
@@ -25,7 +25,7 @@
   outputs = {
     nixpkgs-stable,
     nixpkgs-unstable,
-    hyprland,
+    # hyprland,
     telegram-desktop,
     home-manager,
     nixvim,
@@ -54,7 +54,8 @@
     nixosConfigurations = (
       import ./hosts {
         inherit (nixpkgs-stable) lib;
-        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable hyprland;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable;
+        # inherit hyprland;
       }
     );
 
@@ -63,7 +64,8 @@
     homeConfigurations = (
       import ./users {
         inherit (nixpkgs-unstable) lib;
-        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable telegram-desktop home-manager nixvim hyprland;
+        inherit inputs vars nixpkgs-stable nixpkgs-unstable pkgs-stable pkgs-unstable telegram-desktop home-manager nixvim;
+        # inherit hyprland;
       }
     );
   };

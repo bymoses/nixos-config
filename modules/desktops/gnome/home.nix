@@ -6,14 +6,27 @@
     dash-to-panel
     vitals
     primary-input-on-lockscreen
-    # nasa-apod
   ];
+
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome.gnome-themes-extra;
+    };
+  };
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "gnome";
+  #   style = "adwaita-dark";
+  # };
+  # Wayland, X, etc. support for session vars
+  # systemd.user.sessionVariables = config.home-manager.users.justinas.home.sessionVariables;
 
   dconf.settings = {
     "org/gnome/shell" = {
       disable-user-extensions = false;
       enabled-extensions = [
-        # "nasa_apod@elinvention.ovh"
         "clipboard-history@alexsaveau.dev"
         "dash-to-panel@jderose9.github.com"
         "appindicatorsupport@rgcjonas.gmail.com"
@@ -67,6 +80,7 @@
       num-workspaces = 7;
     };
     "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
       show-battery-percentage = true;
     };
     "org/gnome/shell/app-switcher" = {

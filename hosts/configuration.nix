@@ -119,6 +119,7 @@
     };
     systemPackages = with pkgs-stable; [
       home-manager
+      htop
       git
       jq
     ];
