@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 let
 
   # keymap options
@@ -200,6 +200,18 @@ in
           pyright.enable = true;
           tsserver = {
             enable = true;
+            extraOptions = {
+              init_options = {
+                plugins = [
+                {
+                  name = "@vue/typescript-plugin";
+                  location = "kek";
+                  languages = ["javascript" "typescript" "vue"];
+                }
+                ];
+              };
+            };
+            filetypes = ["javascript" "typescript" "vue"];
           };
           tailwindcss = {
             enable = true;

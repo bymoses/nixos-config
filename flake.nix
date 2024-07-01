@@ -14,7 +14,8 @@
     # hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 
     # hardware.url = "github:nixos/nixos-hardware";
-    telegram-desktop.url = "github:nixos/nixpkgs/2a2ccc0c974d3bdb590597b77f35c454bbfa8a6a";
+    # telegram-desktop.url = "github:nixos/nixpkgs/2a2ccc0c974d3bdb590597b77f35c454bbfa8a6a";
+    telegram-desktop.url = "github:nixos/nixpkgs/nixos-unstable";
 
     nixvim = {
       url = "github:nix-community/nixvim";
